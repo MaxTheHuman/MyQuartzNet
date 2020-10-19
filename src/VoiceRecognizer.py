@@ -13,7 +13,7 @@ from model import ASR
 use_cuda = torch.cuda.is_available()
 torch.manual_seed(7)
 device = torch.device("cuda" if use_cuda else "cpu")
-print(device)
+# print(device)
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -45,7 +45,9 @@ def Decoder(output, blank_label=0, collapse_repeated=True):
                     continue
                 decode.append(index.item())
         decodes.append(int_to_letters(decode))
-    return decodes, targets
+    return decodes
+
+log_softmax = nn.LogSoftmax(dim=2)
 
 def apply(model, spectrogram):
     model.eval()
@@ -63,9 +65,9 @@ state_dict = torch.load(config.get('paths', 'path_to_weights_dict'))
 model.load_state_dict(state_dict)
 model = model.to(device)
 
-waveform, sample_rate = torchaudio.load(path_to_file)
+waveform, sample_rate = torchaudio.load(config.get('paths', 'path_to_audio'))
 spectrogram = mel_transform(waveform)
 spectrogram = torch.log(spectrogram + 1e-9)
 
 prediction = apply(model, spectrogram)
-print(prediction)
+print(prediction[0])

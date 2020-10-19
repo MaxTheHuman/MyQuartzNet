@@ -1,3 +1,7 @@
+import torch
+from torch import nn
+from char_int_dicts import char2int, int2char
+
 class Conv_BN_ReLU(nn.Module):
     def __init__(self, in_channels, out_channels, kernel, stride = 1):
         super(Conv_BN_ReLU, self).__init__()
@@ -46,7 +50,7 @@ class TCSBlock(nn.Module):
         
         self.TCS_layers = nn.Sequential(*[
             TCSConv_BN_ReLU(in_channels, out_channels, kernel)
-            for i in range(R)
+            for i in range(5)
         ])
         # self.TCS_layer_1 = TCSConv_BN_ReLU(in_channels=256, out_channels=256, kernel=33)
         # self.TCS_layer_2 = TCSConv_BN_ReLU(in_channels=256, out_channels=256, kernel=39)
@@ -69,21 +73,21 @@ class MainBlock(nn.Module):
     def __init__(self):
         super(MainBlock, self).__init__()
         
-        self.TCSBlock_1 = TCSBlock(in_channels=256, out_channels=256, kernel=33)
+        # self.TCSBlock_1 = TCSBlock(in_channels=256, out_channels=256, kernel=33)
         self.TCSBlock_2 = TCSBlock(in_channels=256, out_channels=256, kernel=39)
         self.helper_2_3 = Conv_BN_ReLU(in_channels=256, out_channels=512, kernel=51)
         self.TCSBlock_3 = TCSBlock(in_channels=512, out_channels=512, kernel=51)
         self.TCSBlock_4 = TCSBlock(in_channels=512, out_channels=512, kernel=63)
-        self.TCSBlock_5 = TCSBlock(in_channels=512, out_channels=512, kernel=75)
+        # self.TCSBlock_5 = TCSBlock(in_channels=512, out_channels=512, kernel=75)
 
     def forward(self, x):
         # x (batch, channel, feature, time)
-        x = self.TCSBlock_1(x)
+        # x = self.TCSBlock_1(x)
         x = self.TCSBlock_2(x)
         x = self.helper_2_3(x)
         x = self.TCSBlock_3(x)
         x = self.TCSBlock_4(x)
-        x = self.TCSBlock_5(x)
+        # x = self.TCSBlock_5(x)
         return x  # (batch, channel, feature, time)
 
 class ASR(nn.Module):
